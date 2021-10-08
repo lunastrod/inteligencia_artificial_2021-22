@@ -1,0 +1,6 @@
+
+prueba pregunta1:
+python3 pacman.py -l tinyMaze -p SearchAgent -a fn=depthFirstSearch
+
+el gamestate esta aqui
+class PositionSearchProblem(search.SearchProblem):

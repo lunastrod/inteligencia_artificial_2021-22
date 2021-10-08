@@ -113,7 +113,54 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    """
+    # Algoritmo: Búsqueda en grafo
+    frontier = {startNode}
+    expanded = {}
+    while frontier is not empty:
+        node = frontier.pop()
+        if isGoal(node):
+            return path_to_node
+        if node not in expanded:
+            expanded.add(node)
+            for each child of node’s children:
+                frontier.push(child)
+    return failed
+    """
+
+
+    from game import Directions
+    #from pacman import GameState
+    #from searchAgents import PositionSearchProblem
+    #import random
+
+    #state.getPacmanState().configuration
+    #g=GameState()
+
+    #print(g.getLegalActions())
+    print(problem.getActions(problem.getStartState()))
+    print(problem.expand(problem.getStartState()))
+
+    frontier=[problem.getStartState()]
+    expanded=[]
+    while (len(frontier)>0):
+        node = frontier.pop()
+        print("nodo:",node)
+        if problem.isGoalState(node):
+            #return path_to_node
+            print("aaaaaaaaaaaaa")
+            break
+        if node not in expanded:
+            print("nuevo nodo")
+            expanded.insert(0,node[0])
+            for child in problem.expand(node):
+                frontier.insert(0,child[0])
+    return []
+
+    s = Directions.SOUTH
+    w = Directions.WEST
+    return [s,s,w,s]
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
