@@ -133,6 +133,7 @@ def depthFirstSearch(problem):
     from game import Directions
     #from pacman import GameState
     #from searchAgents import PositionSearchProblem
+    from util import Stack
     #import random
 
     #state.getPacmanState().configuration
@@ -142,29 +143,31 @@ def depthFirstSearch(problem):
     print(problem.getActions(problem.getStartState()))
     print(problem.expand(problem.getStartState()))
 
-    frontier=[problem.getStartState()]
-    expanded=[]
-    while (len(frontier)>0):
+    frontier=Stack()
+    frontier.push(problem.getStartState())
+    expanded=Stack()
+    while (not frontier.isEmpty()):
         node = frontier.pop()
         print()
         print("nodo:",node)
-        print("expanded",expanded)
-        print("frontier",frontier)
+        print("expanded",expanded.list)
+        print("frontier",frontier.list)
         
         if problem.isGoalState(node):
             #return path_to_node
             print("aaaaaaaaaaaaa")
+            
             """
             print("expanded",expanded)
             print("frontier",frontier)
             print()
             """
             break
-        if (node not in expanded):
+        if (node not in expanded.list):
             print("nuevo nodo")
-            expanded.insert(0,node)
+            expanded.push(node)
             for child in problem.expand(node):
-                frontier.insert(0,child[0])
+                frontier.push(child[0])
     return []
 
     s = Directions.SOUTH
