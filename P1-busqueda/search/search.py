@@ -146,14 +146,23 @@ def depthFirstSearch(problem):
     expanded=[]
     while (len(frontier)>0):
         node = frontier.pop()
+        print()
         print("nodo:",node)
+        print("expanded",expanded)
+        print("frontier",frontier)
+        
         if problem.isGoalState(node):
             #return path_to_node
             print("aaaaaaaaaaaaa")
+            """
+            print("expanded",expanded)
+            print("frontier",frontier)
+            print()
+            """
             break
-        if node not in expanded:
+        if (node not in expanded):
             print("nuevo nodo")
-            expanded.insert(0,node[0])
+            expanded.insert(0,node)
             for child in problem.expand(node):
                 frontier.insert(0,child[0])
     return []
