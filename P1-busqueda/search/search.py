@@ -112,64 +112,18 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-
-    """
-    # Algoritmo: Búsqueda en grafo
-    frontier = {startNode}
-    expanded = {}
-    while frontier is not empty:
-        node = frontier.pop()
-        if isGoal(node):
-            return path_to_node
-        if node not in expanded:
-            expanded.add(node)
-            for each child of node’s children:
-                frontier.push(child)
-    return failed
-    """
-
-
-    from game import Directions
-    #from pacman import GameState
-    #from searchAgents import PositionSearchProblem
     from util import Stack
-    #import random
-
-    #state.getPacmanState().configuration
-    #g=GameState()
-
-    #print(g.getLegalActions())
-    print(problem.getActions(problem.getStartState()))
-    print(problem.expand(problem.getStartState()))
 
     frontier=Stack()
-    frontier.push([problem.getStartState(),0,0])
+    frontier.push([problem.getStartState(),0,0,[]])
     expanded=Stack()#ruta al destino
     while (not frontier.isEmpty()):
         node = frontier.pop()
-        print()
-        print("nodo:",node)
+        #print("nodo:",node)
         
         if problem.isGoalState(node[0]):
             #return path_to_node
-            path=[]
-            #print("aaaaaaaaaaaaa")
-            print()
-            posAnterior=node
-            while (problem.getStartState()!=posAnterior[0]):
-                path.insert(0,posAnterior[1])
-                #obtengo la posicion del nodo anterior
-                posAnterior=problem.getNextState(posAnterior[0],Directions.REVERSE[posAnterior[1]])
-                #lo busco en la lista expanded
-                for i in expanded.list:
-                    if(posAnterior == i[0]):
-                        posAnterior=i
-                        break
-                #ahora posAnterior es el nodo con la accion y el coste, no solo posicion
-                
-            return path
-            #break
+            return node[3]
         nodeInExpanded=False
         for i in expanded.list:
             if(node[0] == i[0]):
@@ -177,60 +131,26 @@ def depthFirstSearch(problem):
                 break
         
         if (not nodeInExpanded):
-            #print("nuevo nodo")
             expanded.push(node)
             for child in problem.expand(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
                 frontier.push(child)
 
-        #print("expanded",expanded.list)
-        #print("frontier",frontier.list)
-    return []
-
-    s = Directions.SOUTH
-    w = Directions.WEST
-    return [s,s,w,s]
-
 def breadthFirstSearch(problem):
-    from game import Directions
-    #from pacman import GameState
-    #from searchAgents import PositionSearchProblem
     from util import Queue
-    #import random
-
-    #state.getPacmanState().configuration
-    #g=GameState()
-
-    #print(g.getLegalActions())
-    print(problem.getActions(problem.getStartState()))
-    print(problem.expand(problem.getStartState()))
 
     frontier=Queue()
-    frontier.push([problem.getStartState(),0,0])
+    frontier.push((problem.getStartState(),0,0,[]))
     expanded=Queue()#ruta al destino
     while (not frontier.isEmpty()):
         node = frontier.pop()
-        print()
         print("nodo:",node)
         
         if problem.isGoalState(node[0]):
             #return path_to_node
-            path=[]
-            #print("aaaaaaaaaaaaa")
-            print()
-            posAnterior=node
-            while (problem.getStartState()!=posAnterior[0]):
-                path.insert(0,posAnterior[1])
-                #obtengo la posicion del nodo anterior
-                posAnterior=problem.getNextState(posAnterior[0],Directions.REVERSE[posAnterior[1]])
-                #lo busco en la lista expanded
-                for i in expanded.list:
-                    if(posAnterior == i[0]):
-                        posAnterior=i
-                        break
-                #ahora posAnterior es el nodo con la accion y el coste, no solo posicion
-                
-            return path
-            #break
+            return node[3]
         nodeInExpanded=False
         for i in expanded.list:
             if(node[0] == i[0]):
@@ -238,13 +158,13 @@ def breadthFirstSearch(problem):
                 break
         
         if (not nodeInExpanded):
-            #print("nuevo nodo")
             expanded.push(node)
             for child in problem.expand(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
                 frontier.push(child)
 
-        #print("expanded",expanded.list)
-        #print("frontier",frontier.list)
 
 def nullHeuristic(state, problem=None):
     """
@@ -255,8 +175,31 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue,Queue
+
+    frontier=PriorityQueue()
+    frontier.push((problem.getStartState(),0,0,[]),0)
+    expanded=Queue()#ruta al destino
+    while (not frontier.isEmpty()):
+        node = frontier.pop()
+        #print("nodo:",node)
+        
+        if problem.isGoalState(node[0]):
+            #return path_to_node
+            return node[3]
+        nodeInExpanded=False
+        for i in expanded.list:
+            if(node[0] == i[0]):
+                nodeInExpanded=True
+                break
+        
+        if (not nodeInExpanded):
+            expanded.push(node)
+            for child in problem.expand(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
+                frontier.push(child,problem.getCostOfActionSequence(child[3])+heuristic(child[0],problem))
 
 
 # Abbreviations
