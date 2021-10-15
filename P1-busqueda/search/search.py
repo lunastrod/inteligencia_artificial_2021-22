@@ -141,7 +141,7 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     from util import Queue
     import time
-    time.sleep(100000)
+    #time.sleep(100000)
     frontier=Queue()
     frontier.push((problem.getStartState(),0,0,[]))
     expanded=Queue()#ruta al destino

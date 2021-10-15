@@ -314,13 +314,15 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return(self.startingPosition , self.corners)
+        return (self.startingPosition, []) #el segundo array son las esquinas
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        isGoal = state in self.corners
+        pos = state[0]
+        Visited_Corners = state[1]
+        return len(Visited_Corners)==4
         """
         # For display purposes only
         if isGoal and self.visualize:
@@ -345,10 +347,17 @@ class CornersProblem(search.SearchProblem):
             currentPosition, corners = state
         """
         children = []
+        print("stateeee expand",state)
         for action in self.getActions(state):
             # Add a child state to the child list if the action is legal
             # You should call getActions, getActionCost, and getNextState.
-            nextState = self.getNextState(state, action)
+            next_node=state[0]
+            vis_corner = list(state[1])
+            if next_node in self.corners:
+                if next_node not in vis_corner:
+                    vis_corner.append( next_node )
+            print("stateeee expand",state)
+            nextState = (self.getNextState(state, action),)
             cost = self.getActionCost(state, action, nextState)
             children.append( ( nextState, action, cost) )
 
@@ -356,6 +365,7 @@ class CornersProblem(search.SearchProblem):
         return children
 
     def getActions(self, state):
+        print("stateeee get actions",state)
         possible_directions = [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]
         valid_actions_from_state = []
         for action in possible_directions:
@@ -368,11 +378,13 @@ class CornersProblem(search.SearchProblem):
         return valid_actions_from_state
 
     def getActionCost(self, state, action, next_state):
+        print("stateeee get action cost",state)
         assert next_state == self.getNextState(state, action), (
             "Invalid next state passed to getActionCost().")
         return 1
 
     def getNextState(self, state, action):
+        print("stateeee next state",state)
         assert action in self.getActions(state), (
             "Invalid action passed to getActionCost().")
         x, y = state[0] #no he cambiado esto
