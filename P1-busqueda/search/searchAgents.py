@@ -314,15 +314,23 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return(self.startingPosition , self.corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        isGoal = state in self.corners
+        """
+        # For display purposes only
+        if isGoal and self.visualize:
+            self._visitedlist.append(state)
+            import __main__
+            if '_display' in dir(__main__):
+                if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
+                    __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
+        """
+        return isGoal
 
     def expand(self, state):
         """
@@ -333,13 +341,16 @@ class CornersProblem(search.SearchProblem):
             action, stepCost), where 'child' is a child to the current
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that child
-        """
 
+            currentPosition, corners = state
+        """
         children = []
         for action in self.getActions(state):
             # Add a child state to the child list if the action is legal
             # You should call getActions, getActionCost, and getNextState.
-            "*** YOUR CODE HERE ***"
+            nextState = self.getNextState(state, action)
+            cost = self.getActionCost(state, action, nextState)
+            children.append( ( nextState, action, cost) )
 
         self._expanded += 1 # DO NOT CHANGE
         return children
@@ -353,6 +364,7 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 valid_actions_from_state.append(action)
+        print(valid_actions_from_state)
         return valid_actions_from_state
 
     def getActionCost(self, state, action, next_state):
@@ -363,9 +375,12 @@ class CornersProblem(search.SearchProblem):
     def getNextState(self, state, action):
         assert action in self.getActions(state), (
             "Invalid action passed to getActionCost().")
-        x, y = state[0]
+        x, y = state[0] #no he cambiado esto
         dx, dy = Actions.directionToVector(action)
         nextx, nexty = int(x + dx), int(y + dy)
+        return ((nextx, nexty),self.corners)
+
+
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
         # you will need to replace the None part of the following tuple.
