@@ -154,19 +154,30 @@ def depthFirstSearch(problem):
         if problem.isGoalState(node[0]):
             #return path_to_node
             path=[]
-            #print("aaaaaaaaaaaaa")
+            print("aaaaaaaaaaaaa")
             print()
             posAnterior=node
             while (problem.getStartState()!=posAnterior[0]):
+                print("nodoActual:",posAnterior)
+                
+                #ESTO DA ERROR EN EL AUTOGRADER WHAAAAAT????????
+                print("acciones",problem.getActions(posAnterior))
+
                 path.insert(0,posAnterior[1])
                 #obtengo la posicion del nodo anterior
                 posAnterior=problem.getNextState(posAnterior[0],Directions.REVERSE[posAnterior[1]])
+                print("posAnterior:",posAnterior)
+
+                
+                
                 #lo busco en la lista expanded
                 for i in expanded.list:
                     if(posAnterior == i[0]):
                         posAnterior=i
                         break
                 #ahora posAnterior es el nodo con la accion y el coste, no solo posicion
+                print("nodoAnterior:",posAnterior)
+                print()
                 
             return path
             #break
@@ -182,8 +193,8 @@ def depthFirstSearch(problem):
             for child in problem.expand(node[0]):
                 frontier.push(child)
 
-        #print("expanded",expanded.list)
-        #print("frontier",frontier.list)
+        print("expanded",expanded.list)
+        print("frontier",frontier.list)
     return []
 
     s = Directions.SOUTH
