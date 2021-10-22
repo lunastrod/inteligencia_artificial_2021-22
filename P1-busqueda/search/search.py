@@ -120,6 +120,9 @@ def depthFirstSearch(problem):
     while (not frontier.isEmpty()):
         node = frontier.pop()
         #print("nodo:",node)
+
+        if(len(expanded.list)>300):#modificado
+            return node[3]
         
         if problem.isGoalState(node[0]):
             #return path_to_node
@@ -154,8 +157,12 @@ def breadthFirstSearch(problem):
     frontier.push((problem.getStartState(),0,0,[]))
     expanded=Queue()#ruta al destino
     while (not frontier.isEmpty()):
+        
         node = frontier.pop()
         print("nodo:",node)
+
+        if(len(expanded.list)>300):#modificado
+            return node[3]
         
         if problem.isGoalState(node[0]):
             #return path_to_node
