@@ -370,7 +370,7 @@ class CornersProblem(search.SearchProblem):
         valid_actions_from_state = []
         for action in possible_directions:
             x, y = state[0]
-            dx, dy = Actions.directionToVector(action)
+            dx, dy = Actions.directionToVector(action)    
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 valid_actions_from_state.append(action)
