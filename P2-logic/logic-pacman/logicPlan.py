@@ -74,7 +74,13 @@ def sentence1():
     (not A) or (not B) or C
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    A=logic.Expr('A')
+    B=logic.Expr('B')
+    C=logic.Expr('C')
+    expr1=A|B
+    expr2=~A % (~B | C)
+    expr3=logic.disjoin(~A, ~B, C)
+    return logic.conjoin(expr1,expr2,expr3)
 
 def sentence2():
     """Returns a logic.Expr instance that encodes that the following expressions are all true.
@@ -85,7 +91,22 @@ def sentence2():
     (not D) implies C
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    A=logic.Expr('A')
+    B=logic.Expr('B')
+    C=logic.Expr('C')
+    D=logic.Expr('D')
+    """
+    C⇔B∨D
+    A⇒¬B∧¬D
+    ¬ (B∧¬C) ⇒A
+    ¬D⇒C
+    
+    """
+    expr1=C%(B|D)
+    expr2=A>>(~B&~D)
+    expr3=~(B&~C)>>A
+    expr4=~D>>C
+    return logic.conjoin(expr1,expr2,expr3,expr4)
 
 def sentence3():
     """Using the symbols WumpusAlive[1], WumpusAlive[0], WumpusBorn[0], and WumpusKilled[0],
@@ -100,7 +121,18 @@ def sentence3():
     The Wumpus is born at time 0.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+
+
+    WA1 = logic.PropSymbolExpr("WumpusAlive[1]")
+    WA0 = logic.PropSymbolExpr("WumpusAlive[0]")
+    WB0 = logic.PropSymbolExpr("WumpusBorn[0]")
+    WK0 = logic.PropSymbolExpr("WumpusKilled[0]")
+
+    expr1=WA1%((WA0&~WK0) | (~WA0&WB0))
+    expr2=~(WA0 & WB0)
+    expr3=WB0
+    return logic.conjoin(expr1,expr2,expr3)
 
 def modelToString(model):
     """Converts the model to a string for printing purposes. The keys of a model are 
@@ -122,7 +154,13 @@ def findModel(sentence):
     model if one exists. Otherwise, returns False.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #print("findmodel")
+    #print(sentence)
+    cnf = logic.to_cnf(sentence)
+    #print(cnf)
+    sat = logic.pycoSAT(cnf)
+    #print(sat)
+    return sat
 
 def atLeastOne(literals):
     """
@@ -144,8 +182,7 @@ def atLeastOne(literals):
     True
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    return logic.disjoin(literals)
 
 def atMostOne(literals) :
     """
@@ -154,7 +191,18 @@ def atMostOne(literals) :
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    expresions=[]
+    expresions.append(~logic.disjoin(literals))
+    for i in range(len(literals)):
+        l=literals.copy()
+        for j in range(len(l)):
+            if(i==j):
+                continue
+            l[j]=~l[j]
+        expresions.append(logic.conjoin(l))
+    #print(literals)
+    #print(logic.disjoin(expresions))
+    return logic.to_cnf(logic.disjoin(expresions))
 
 
 def exactlyOne(literals):
@@ -164,7 +212,22 @@ def exactlyOne(literals):
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #logic.disjoin(A&~B&~C&~D,~A&B&~C&~D,~A&~B&C&~D,~A&~B&~C&D)
+    expresions=[]
+    for i in range(len(literals)):
+        l=literals.copy()
+        for j in range(len(l)):
+            if(i==j):
+                continue
+            l[j]=~l[j]
+        print(l)
+        e=l[0]&l[1]
+        for j in range(2,len(l)):
+            e=e&l[j]
+        expresions.append(e)
+    print(literals)
+    print(logic.disjoin(expresions))
+    return logic.disjoin(expresions)
 
 
 def extractActionSequence(model, actions):
