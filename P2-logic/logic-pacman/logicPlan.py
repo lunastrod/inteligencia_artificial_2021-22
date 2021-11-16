@@ -191,18 +191,15 @@ def atMostOne(literals) :
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    expresions=[]
-    expresions.append(~logic.disjoin(literals))
+    #hecho con https://www.charlie-coleman.com/experiments/kmap/
+    conjunctions = []
     for i in range(len(literals)):
-        l=literals.copy()
-        for j in range(len(l)):
-            if(i==j):
-                continue
-            l[j]=~l[j]
-        expresions.append(logic.conjoin(l))
-    #print(literals)
-    #print(logic.disjoin(expresions))
-    return logic.to_cnf(logic.disjoin(expresions))
+        for j in range(0,i):
+            conjunctions.append(logic.disjoin(~literals[i],~literals[j]))
+
+    #print(conjunctions)
+    return logic.conjoin(conjunctions)
+
 
 
 def exactlyOne(literals):
@@ -212,22 +209,16 @@ def exactlyOne(literals):
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    #logic.disjoin(A&~B&~C&~D,~A&B&~C&~D,~A&~B&C&~D,~A&~B&~C&D)
-    expresions=[]
+    #hecho con https://www.charlie-coleman.com/experiments/kmap/
+    conjunctions = []
+    conjunctions.append(logic.disjoin(literals))
     for i in range(len(literals)):
-        l=literals.copy()
-        for j in range(len(l)):
-            if(i==j):
-                continue
-            l[j]=~l[j]
-        print(l)
-        e=l[0]&l[1]
-        for j in range(2,len(l)):
-            e=e&l[j]
-        expresions.append(e)
-    print(literals)
-    print(logic.disjoin(expresions))
-    return logic.disjoin(expresions)
+        for j in range(0,i):
+            conjunctions.append(logic.disjoin(~literals[i],~literals[j]))
+
+    #print(conjunctions)
+    return logic.conjoin(conjunctions)
+
 
 
 def extractActionSequence(model, actions):
@@ -243,7 +234,24 @@ def extractActionSequence(model, actions):
     ['West', 'South', 'North']
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    result = []
+    #print("model:\n",model,"\n")
+    for i in model.keys():
+        if model[i]:
+            a = logic.parseExpr(i)
+            if a[0] in actions:
+                result.append(a)
+
+    #print("extract actions:\n",result,"\n")
+
+    result = sorted(result, key=lambda mod: int(mod[1]))
+    #print("sort:\n",result,"\n")
+    
+    for i in range(len(result)):
+        result[i]=result[i][0]
+    #print("list of actions:\n",result,"\n")
+    return result
 
 def pacmanSuccessorStateAxioms(x, y, t, walls_grid):
     """
@@ -252,7 +260,43 @@ def pacmanSuccessorStateAxioms(x, y, t, walls_grid):
     Current <==> (previous position at time t-1) & (took action to move to x, y)
     """
     "*** YOUR CODE HERE ***"
-    return logic.Expr('A') # Replace this with your expression
+    current = logic.PropSymbolExpr(pacman_str, x, y, t)
+
+    neighbors = []
+
+    if(walls_grid[x-1][y] == False):
+        prev_position = logic.PropSymbolExpr(pacman_str, x-1, y, t-1)
+        action = logic.PropSymbolExpr('East', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if(walls_grid[x+1][y] == False):
+        prev_position = logic.PropSymbolExpr(pacman_str, x+1, y, t-1)
+        action = logic.PropSymbolExpr('West', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if(walls_grid[x][y-1] == False):
+        prev_position = logic.PropSymbolExpr(pacman_str, x, y-1, t-1)
+        action = logic.PropSymbolExpr('North', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if(walls_grid[x][y+1] == False):
+        prev_position = logic.PropSymbolExpr(pacman_str, x, y+1, t-1)
+        action = logic.PropSymbolExpr('South', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+
+    #print("\n\n\nstart")
+    #print("neighbors:\n",neighbors,"\n")
+    prev_states = atLeastOne(neighbors)
+    #print("prev_states:\n",prev_states,"\n")
+
+    final_axiom = current % prev_states
+    #print("final axiom:\n",final_axiom,"\n")
+    return final_axiom
 
 
 def positionLogicPlan(problem):
@@ -261,6 +305,7 @@ def positionLogicPlan(problem):
     Available actions are ['North', 'East', 'South', 'West']
     Note that STOP is not an available action.
     """
+    """
     walls = problem.walls
     width, height = problem.getWidth(), problem.getHeight()
     walls_list = walls.asList()
@@ -268,7 +313,81 @@ def positionLogicPlan(problem):
     xg, yg = problem.getGoalState()
     
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    walls = problem.walls
+    
+    MAX_TIME_STEP = 50
+    actions = ['North', 'East', 'South', 'West']
+    width, height = problem.getWidth(), problem.getHeight()
+    initial_state = problem.getStartState()
+    goal_state = problem.getGoalState()
+    expression = list()
+
+
+    # CAN ONLY START AT ONE LOCATION
+    initial_positions=[]
+    for x in range(1, width+1) :
+        for y in range(1, height+1) :
+            initial_positions.append(logic.PropSymbolExpr("P", x, y, 0))
+            if (x, y) == initial_state:
+                if expression:
+                    v = expression.pop()
+                    expression.append(logic.conjoin(v,logic.PropSymbolExpr("P", x, y, 0)))
+                else:
+                    expression.append(logic.Expr(logic.PropSymbolExpr("P", x, y, 0)))
+            else:
+                if expression:
+                    v = expression.pop()
+                    expression.append(logic.conjoin(v,logic.Expr("~", logic.PropSymbolExpr("P", x, y, 0))))
+                else:
+                    expression.append(logic.Expr("~", logic.PropSymbolExpr("P", x, y, 0)))
+    initial = expression[0]
+    print("\ninitial:\n",initial)
+    initial=exactlyOne(initial_positions)
+    print("\ninitial:\n",initial)
+
+
+    successors = []
+    exclusion = []
+    for t in range(MAX_TIME_STEP):
+        succ = []
+        ex = []
+        suc = []
+        if t > 0:
+            for x in range(1, width + 1):
+                for y in range(1, height + 1):
+                    if (x, y) not in walls.asList():
+                        succ += [pacmanSuccessorStateAxioms(x, y, t, walls)]
+            suc = logic.conjoin(succ) #or every place at t 
+            if successors:
+                success = logic.conjoin(suc, logic.conjoin(successors)) #combine with previous successors
+            else:
+                success = suc
+
+
+            # ONLY ONE ACTION CAN BE TAKEN
+            for action in actions: #exclusion axioms
+                ex.append(logic.PropSymbolExpr(action, t-1))
+            n = exactlyOne(ex)
+            exclusion.append(n)
+            exclus = logic.conjoin(exclusion)
+
+
+            # GOAL TEST
+            goal = logic.conjoin(logic.PropSymbolExpr("P", goal_state[0], goal_state[1], t+1), pacmanSuccessorStateAxioms(goal_state[0], goal_state[1], t+1, walls))
+
+            
+            # CONJOIN AND FIND MODEL
+            j = findModel(logic.conjoin(initial, goal, exclus, success)) #and them together
+
+        else:
+            goal = logic.conjoin(logic.PropSymbolExpr("P", goal_state[0], goal_state[1], t+1), pacmanSuccessorStateAxioms(goal_state[0], goal_state[1], t+1, walls))
+            j = findModel(logic.conjoin(initial, goal))
+        if j is not False:
+            return extractActionSequence(j, actions)
+        if suc:
+            successors.append(suc)
+    return None
 
 
 def foodLogicPlan(problem):
