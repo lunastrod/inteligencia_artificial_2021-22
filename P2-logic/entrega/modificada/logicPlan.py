@@ -134,6 +134,35 @@ def sentence3():
     expr3=WB0
     return logic.conjoin(expr1,expr2,expr3)
 
+def sentence4():
+    """
+    Define el método sentence4().
+    Usa  el constructor logic.PropSymbolExpr para crear los símbolos 
+        Agente[1,1,0], Agente[2,1,1], Agente[Norte,0] y Agente[Este,0].
+    Crea una instancia de logic.Expr que codifique las siguientes tres oraciones en lógica proposicional en
+    este orden y sin ninguna simplificación:
+        1. El Agente está en la posición (2,1) en el tiempo 1 si y solo si estaba en la posición (1,1) en
+            el tiempo 0 y se movió hacia el Este en el tiempo 0 y no se movió hacia el Norte en el
+            tiempo 0.
+        2. El Agente está en la posición (2,1) en el tiempo 1.
+        3. El Agente en el tiempo 0 solo se ha podido mover al Este o al Norte.
+    Devuelve la conjunción de las sentencias anteriores
+    """
+    #Usa  el constructor logic.PropSymbolExpr para crear los símbolos
+    A110 = logic.PropSymbolExpr("Agente[1,1,0]")
+    A211 = logic.PropSymbolExpr("Agente[2,1,1]")
+    ANo0 = logic.PropSymbolExpr("Agente[Norte,0]")
+    AEs0 = logic.PropSymbolExpr("Agente[Este,0]")
+
+    #Crea una instancia de logic.Expr que codifique las siguientes tres oraciones en lógica proposicional en
+    #este orden y sin ninguna simplificación
+    expr1=(A211)%logic.conjoin(A110, AEs0, ~ANo0)
+    expr2=A211
+    expr3=(ANo0 & ~AEs0) | (~ANo0 & AEs0) #tambien podría usar exactlyOne() que ahí está en cnf
+
+    #Devuelve la conjunción de las sentencias anteriores
+    return logic.conjoin(expr1,expr2,expr3)
+
 def modelToString(model):
     """Converts the model to a string for printing purposes. The keys of a model are 
     sorted before converting the model to a string.
@@ -219,7 +248,13 @@ def exactlyOne(literals):
     #print(conjunctions)
     return logic.conjoin(conjunctions)
 
+def allTrue(literales):
+    #todos true es una puerta and
+    return logic.conjoin(literales)
 
+def noOne(literales):
+    #todos false es una puerta and con todas las entradas negadas, o una puerta nor.
+    return ~logic.disjoin(literales)
 
 def extractActionSequence(model, actions):
     """
