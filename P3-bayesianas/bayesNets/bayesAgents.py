@@ -103,6 +103,7 @@ def constructBayesNet(gameState):
                 obsVar = OBS_VAR_TEMPLATE % obsPos #convierte una tupla en una obsVar... horrible uso de operadores
                 print(obsPos)
                 obsVars.append(obsVar)
+
                 variableDomainsDict[obsVar] = OBS_VALS
                 edges.append((FOOD_HOUSE_VAR, obsVar))
                 edges.append((GHOST_HOUSE_VAR, obsVar))
@@ -121,6 +122,7 @@ def constructBayesNet(gameState):
     edges.append((X_POS_VAR, GHOST_HOUSE_VAR))
     edges.append((Y_POS_VAR, GHOST_HOUSE_VAR))
     #util.raiseNotDefined()
+
     "*** END YOUR CODE HERE ***"
 
     variables = [X_POS_VAR, Y_POS_VAR] + HOUSE_VARS + obsVars
@@ -153,9 +155,11 @@ def fillYCPT(bayesNet, gameState):
 
     yFactor = bn.Factor([Y_POS_VAR], [], bayesNet.variableDomainsDict())
     "*** YOUR CODE HERE ***"
-    from layout import PROB_LEFT_TOP
-    yFactor.setProbability({Y_POS_VAR: FOOD_LEFT_VAL}, PROB_LEFT_TOP)
-    yFactor.setProbability({Y_POS_VAR: GHOST_LEFT_VAL}, 1 - PROB_LEFT_TOP)
+    yFactor.setProbability({Y_POS_VAR: BOTH_BOTTOM_VAL}, PROB_BOTH_BOTTOM)
+    yFactor.setProbability({Y_POS_VAR: BOTH_TOP_VAL}, PROB_BOTH_TOP)
+    
+    yFactor.setProbability({Y_POS_VAR: LEFT_TOP_VAL}, PROB_ONLY_LEFT_TOP)
+    yFactor.setProbability({Y_POS_VAR: LEFT_BOTTOM_VAL}, PROB_ONLY_LEFT_BOTTOM)
     #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
     bayesNet.setCPT(Y_POS_VAR, yFactor)

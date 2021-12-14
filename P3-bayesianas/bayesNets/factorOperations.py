@@ -102,7 +102,31 @@ def joinFactors(factors):
 
 
     "*** YOUR CODE HERE ***"
+    unconditioned = []
+    conditioned = []
+    factors_dict={}
+    """
+    uso un diccionario para evitar que se repitan
+    """
+    for factor in factors:
+        for v in factor.unconditionedVariables():
+            print(v)
+            factors_dict[v]="unconditioned"
+        for v in factor.conditionedVariables():
+            if(factors_dict.get(v)=="unconditioned" or None):
+                factors_dict[v]="conditioned"
+        print(factors_dict)
+
+    #conditioned = conditioned - unconditioned
+    print(factors_dict)
     util.raiseNotDefined()
+    newFactor = Factor(unconditioned, conditioned, factors[0].variableDomainsDict())
+
+    for aDict in newFactor.getAllPossibleAssignmentDicts():
+        prob = 1
+        for factor in factors:
+            prob = prob * factor.getProbability(aDict)
+        newFactor.setProbability(aDict, prob)
     "*** END YOUR CODE HERE ***"
 
 
