@@ -171,7 +171,31 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue,Queue
+
+    frontier=PriorityQueue()
+    frontier.push((problem.getStartState(),0,0,[]),0)
+    expanded=Queue()#ruta al destino
+    while (not frontier.isEmpty()):
+        node = frontier.pop()
+        #print("nodo:",node)
+        
+        if problem.isGoalState(node[0]):
+            #return path_to_node
+            return node[3]
+        nodeInExpanded=False
+        for i in expanded.list:
+            if(node[0] == i[0]):
+                nodeInExpanded=True
+                break
+        
+        if (not nodeInExpanded):
+            expanded.push(node)
+            for child in problem.getSuccessors(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
+                frontier.push(child,problem.getCostOfActions(child[3]))
 
 def nullHeuristic(state, problem=None):
     """
@@ -207,7 +231,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
                 child=list(child)
                 child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
                 child=tuple(child)
-                frontier.push(child,problem.getCostOfActionSequence(child[3])+heuristic(child[0],problem))
+                frontier.push(child,problem.getCostOfActions(child[3])+heuristic(child[0],problem))
 
 
 # Abbreviations
