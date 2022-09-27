@@ -41,45 +41,18 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-    def expand(self, state):
+    def getSuccessors(self, state):
         """
           state: Search state
 
-        For a given state, this should return a list of triples, (child,
-        action, stepCost), where 'child' is a child to the current
+        For a given state, this should return a list of triples, (successor,
+        action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
-        the incremental cost of expanding to that child.
+        the incremental cost of expanding to that successor.
         """
         util.raiseNotDefined()
 
-    def getActions(self, state):
-        """
-          state: Search state
-
-        For a given state, this should return a list of possible actions.
-        """
-        util.raiseNotDefined()
-
-    def getActionCost(self, state, action, next_state):
-        """
-          state: Search state
-          action: action taken at state.
-          next_state: next Search state after taking action.
-
-        For a given state, this should return the cost of the (s, a, s') transition.
-        """
-        util.raiseNotDefined()
-
-    def getNextState(self, state, action):
-        """
-          state: Search state
-          action: action taken at state
-
-        For a given state, this should return the next state after taking action from state.
-        """
-        util.raiseNotDefined()
-
-    def getCostOfActionSequence(self, actions):
+    def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
 
@@ -99,7 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem):
+def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
 
@@ -111,17 +84,25 @@ def depthFirstSearch(problem):
 
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+    "*** YOUR CODE HERE ***"
     from util import Stack
 
     frontier=Stack()
     frontier.push([problem.getStartState(),0,0,[]])
+
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print("depthFirstSearch")
+    
     expanded=Stack()#ruta al destino
     while (not frontier.isEmpty()):
         node = frontier.pop()
         #print("nodo:",node)
 
-        if(len(expanded.list)>300):#modificado
+        if(len(expanded.list)>1000):
             return node[3]
         
         if problem.isGoalState(node[0]):
@@ -135,7 +116,7 @@ def depthFirstSearch(problem):
         
         if (not nodeInExpanded):
             expanded.push(node)
-            for child in problem.expand(node[0]):
+            for child in problem.getSuccessors(node[0]):
                 child=list(child)
                 child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
                 child=tuple(child)
@@ -149,38 +130,15 @@ def depthFirstSearch(problem):
     w = Directions.WEST
     return [s,s,w,s]
 
-def breadthFirstSearch(problem):
-    from util import Queue
-    import time
-    #time.sleep(100000)
-    frontier=Queue()
-    frontier.push((problem.getStartState(),0,0,[]))
-    expanded=Queue()#ruta al destino
-    while (not frontier.isEmpty()):
-        
-        node = frontier.pop()
-        print("nodo:",node)
+def breadthFirstSearch(problem: SearchProblem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
-        if(len(expanded.list)>1000):#modificado
-            return node[3]
-        
-        if problem.isGoalState(node[0]):
-            #return path_to_node
-            return node[3]
-        nodeInExpanded=False
-        for i in expanded.list:
-            if(node[0] == i[0]):
-                nodeInExpanded=True
-                break
-        
-        if (not nodeInExpanded):
-            expanded.push(node)
-            for child in problem.expand(node[0]):
-                child=list(child)
-                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
-                child=tuple(child)
-                frontier.push(child)
-
+def uniformCostSearch(problem: SearchProblem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -189,36 +147,14 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    from util import PriorityQueue,Queue
-
-    frontier=PriorityQueue()
-    frontier.push((problem.getStartState(),0,0,[]),0)
-    expanded=Queue()#ruta al destino
-    while (not frontier.isEmpty()):
-        node = frontier.pop()
-        #print("nodo:",node)
-        
-        if problem.isGoalState(node[0]):
-            #return path_to_node
-            return node[3]
-        nodeInExpanded=False
-        for i in expanded.list:
-            if(node[0] == i[0]):
-                nodeInExpanded=True
-                break
-        
-        if (not nodeInExpanded):
-            expanded.push(node)
-            for child in problem.expand(node[0]):
-                child=list(child)
-                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
-                child=tuple(child)
-                frontier.push(child,problem.getCostOfActionSequence(child[3])+heuristic(child[0],problem))
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
 
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
+ucs = uniformCostSearch
