@@ -91,10 +91,6 @@ def depthFirstSearch(problem: SearchProblem):
 
     frontier=Stack()
     frontier.push([problem.getStartState(),0,0,[]])
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     print("depthFirstSearch")
     
     expanded=Stack()#ruta al destino
@@ -133,7 +129,44 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import Queue
+
+    frontier=Queue()
+    frontier.push([problem.getStartState(),0,0,[]])
+    print("depthFirstSearch")
+    
+    expanded=Queue()#ruta al destino
+    while (not frontier.isEmpty()):
+        node = frontier.pop()
+        #print("nodo:",node)
+
+        if(len(expanded.list)>1000):
+            return node[3]
+        
+        if problem.isGoalState(node[0]):
+            #return path_to_node
+            return node[3]
+        nodeInExpanded=False
+        for i in expanded.list:
+            if(node[0] == i[0]):
+                nodeInExpanded=True
+                break
+        
+        if (not nodeInExpanded):
+            expanded.push(node)
+            for child in problem.getSuccessors(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
+                frontier.push(child)
+
+        #print("expanded",expanded.list)
+        #print("frontier",frontier.list)
+    return []
+
+    s = Directions.SOUTH
+    w = Directions.WEST
+    return [s,s,w,s]
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
@@ -150,7 +183,31 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue,Queue
+
+    frontier=PriorityQueue()
+    frontier.push((problem.getStartState(),0,0,[]),0)
+    expanded=Queue()#ruta al destino
+    while (not frontier.isEmpty()):
+        node = frontier.pop()
+        #print("nodo:",node)
+        
+        if problem.isGoalState(node[0]):
+            #return path_to_node
+            return node[3]
+        nodeInExpanded=False
+        for i in expanded.list:
+            if(node[0] == i[0]):
+                nodeInExpanded=True
+                break
+        
+        if (not nodeInExpanded):
+            expanded.push(node)
+            for child in problem.getSuccessors(node[0]):
+                child=list(child)
+                child.append(node[3]+[child[1]])#añado el camino al nodo desde el inicio
+                child=tuple(child)
+                frontier.push(child,problem.getCostOfActionSequence(child[3])+heuristic(child[0],problem))
 
 
 # Abbreviations
