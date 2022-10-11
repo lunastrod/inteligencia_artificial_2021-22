@@ -91,7 +91,7 @@ def depthFirstSearch(problem: SearchProblem):
 
     frontier=Stack()
     frontier.push([problem.getStartState(),0,0,[]])
-    print("depthFirstSearch")
+    #print("depthFirstSearch")
     
     expanded=Stack()#ruta al destino
     while (not frontier.isEmpty()):
@@ -133,7 +133,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     frontier=Queue()
     frontier.push([problem.getStartState(),0,0,[]])
-    print("depthFirstSearch")
+    #print("depthFirstSearch")
     
     expanded=Queue()#ruta al destino
     while (not frontier.isEmpty()):

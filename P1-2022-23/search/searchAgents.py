@@ -333,6 +333,7 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
 
         pos = state[0]
+        #print(state[1])
         Visited_Corners = state[1]
         if pos in self.corners:
             if pos not in Visited_Corners:
@@ -382,6 +383,8 @@ class CornersProblem(search.SearchProblem):
             
 
         self._expanded += 1  # DO NOT CHANGE
+        #print((x,y))
+        #print(successors)
         return successors
 
     def getCostOfActions(self, actions):
@@ -429,7 +432,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         if corners[i] not in Visited_Corners:
             un_Visited_Corner.append(corners[i])
 
-    print(un_Visited_Corner)
+    #print(un_Visited_Corner)
 
     cur_position = node
     while(len(un_Visited_Corner)!=0):
@@ -548,6 +551,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     "*** YOUR CODE HERE ***"
 
     #return len(foodGrid.asList())
+    """
     total_distance=0
     food_list = foodGrid.asList()
 
@@ -566,6 +570,15 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     
 
     return total_distance
+    """
+
+    food_list = foodGrid.asList()
+    distances=[]
+    for i in range(len(food_list)):
+        distances.append(mazeDistance(position, food_list[i], problem.startingGameState))
+    if(len(distances)==0):
+        return 0
+    return max(distances)
 
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -600,8 +613,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        return search.astar(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -637,7 +649,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x, y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (x, y) in self.food.asList()
 
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
