@@ -147,6 +147,32 @@ class SearchAgent(Agent):
         else:
             return Directions.STOP
 
+def custom_cost_fn(x, action):
+    """
+    Se pide modificar el cálculo del coste de las acciones que realiza Pacman. Para la nueva
+    implementación queremos que el coste de los movimientos que no sean hacia el norte tengan
+    un coste de 2x respecto al coste normal esperado para dichos movimientos. Además de esto,
+    el coste de un movimiento de Pacman hacia el norte será de 0. Resumiendo:
+        ● Movimiento Norte: 0
+        ● Movimiento Sur, Este, Oeste: 2x coste.
+    Explicar en el comentario donde se realicen las modificaciones los cambios en los resultados
+    observados para el algoritmo A* respecto a los resultados previos.
+
+    se observa que el número de nodos expandidos es mayor, A* tiende a expandir nodos hacia el
+    norte que no llevan a la solución.
+
+    he modificado PositionSearchProblem para que pase a costFn la función custom_cost_fn, que
+    ahora tiene como argumento la acción que se va a realizar.
+    """
+    #return 1
+    cost=2
+    if(action == 'North'):
+        cost=0
+    #print("custom_cost_fn", x, action, cost)
+    return cost
+
+#costFn=lambda x,y: 1
+
 
 class PositionSearchProblem(search.SearchProblem):
     """
@@ -159,7 +185,7 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, costFn=lambda x:1, goal=(1, 1), start=None, warn=True, visualize=True):
+    def __init__(self, gameState, costFn=custom_cost_fn, goal=(1, 1), start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
 
@@ -217,7 +243,7 @@ class PositionSearchProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
-                cost = self.costFn(nextState)
+                cost = self.costFn(nextState, action)
                 successors.append((nextState, action, cost))
 
         # Bookkeeping for display purposes
@@ -243,7 +269,7 @@ class PositionSearchProblem(search.SearchProblem):
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]:
                 return 999999
-            cost += self.costFn((x, y))
+            cost += self.costFn((x, y), action)
         return cost
 
 
@@ -288,6 +314,19 @@ def euclideanHeuristic(position, problem, info={}):
     xy1 = position
     xy2 = problem.goal
     return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5
+
+def chebyshovDistance(position, problem, info={}):
+    """The Chebyshov distance heuristic for a PositionSearchProblem"""
+    """
+        Se pide añadir una nueva heurística como método Python chebyshovDistance que calcule la
+        distancia de Chebyshov para la búsqueda A*.
+
+    """
+    xy1 = position
+    xy2 = problem.goal
+    distance=max(abs(xy2[0]-xy1[0]),abs(xy2[1]-xy1[1]))
+    print("chebyshovDistance",xy1,xy2,distance)
+    return distance
 
 #####################################################
 # This portion is incomplete.  Time to write code!  #
