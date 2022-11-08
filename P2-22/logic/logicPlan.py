@@ -260,7 +260,13 @@ def pacmanSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[
         return None
     
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    prev_states=atLeastOne(possible_causes)
+    print(prev_states)
+    current=logic.PropSymbolExpr(pacman_str, x, y, time=now)
+    print(current)
+    final_axiom=current%prev_states
+    print(final_axiom)
+    return final_axiom
     "*** END YOUR CODE HERE ***"
 
 
@@ -331,7 +337,7 @@ def pacphysicsAxioms(t: int, all_coords: List[Tuple], non_outer_wall_coords: Lis
     pacphysics_sentences = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    util.raiseNotDefined()        
     "*** END YOUR CODE HERE ***"
 
     return conjoin(pacphysics_sentences)
@@ -365,8 +371,7 @@ def checkLocationSatisfiability(x1_y1: Tuple[int, int], x0_y0: Tuple[int, int], 
     KB.append(conjoin(map_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-
-
+    util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
@@ -393,7 +398,21 @@ def positionLogicPlan(problem) -> List:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # initial knowledge: Pacman is at the start state
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+    
+    for t in range(1, 50):
+        print("timestep: ", t)
+        # knowledge: Pacman exactly one location in non_wall_coords
+        for x, y in non_wall_coords:
+            KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t)]))
+        # goal assertion: Pacman is at the goal state
+        KB.append(PropSymbolExpr(pacman_str, xg, yg, time=t))
+        # pacman takes exactly one action
+        for action in actions:
+            KB.append(exactlyOne([PropSymbolExpr(action_str, action, time=t)]))
+        
+        
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
