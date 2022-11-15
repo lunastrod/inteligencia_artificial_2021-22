@@ -114,6 +114,9 @@ def sentence3() -> Expr:
     expr1=WA1%((WA0&~WK0) | (~WA0&WB0))
     expr2=~(WA0 & WB0)
     expr3=WB0
+    #print(expr1)
+    #print(expr2)
+    #print(expr3)
     return logic.conjoin(expr1,expr2,expr3)
     "*** END YOUR CODE HERE ***"
 
@@ -121,6 +124,9 @@ def findModel(sentence: Expr) -> Dict[Expr, bool]:
     """Given a propositional logic sentence (i.e. a Expr instance), returns a satisfying
     model if one exists. Otherwise, returns False.
     """
+    #print(sentence)
+    #print(to_cnf(sentence))
+    #print(pycoSAT(to_cnf(sentence)))
     cnf_sentence = to_cnf(sentence)
     return pycoSAT(cnf_sentence)
 
@@ -139,6 +145,8 @@ def findModelCheck() -> Dict[Any, bool]:
         def __repr__(self):
             return self.variable_name
     "*** BEGIN YOUR CODE HERE ***"
+    #print(dummyClass('a'))
+    #I return a dict with a dummyClass('a') as key and True as value
     return {dummyClass(variable_name='a'):True}
     "*** END YOUR CODE HERE ***"
 
@@ -150,6 +158,7 @@ def entails(premise: Expr, conclusion: Expr) -> bool:
     #print(premise)
     #print(conclusion)
     if(True in findModel(~premise|conclusion).values()):
+        #if the model contains a True value, then the premise does not entail the conclusion
         return False
     return True
     "*** END YOUR CODE HERE ***"
@@ -159,6 +168,12 @@ def plTrueInverse(assignments: Dict[Expr, bool], inverse_statement: Expr) -> boo
     pl_true may be useful here; see logic.py for its description.
     """
     "*** BEGIN YOUR CODE HERE ***"
+    #print("plTrueInverse")
+    #print(assignments)
+    #print(inverse_statement)
+    #print(~inverse_statement)
+    #print(logic.pl_true(~inverse_statement,assignments))
+    #return logic.pl_true(~inverse_statement,assignments)
     return not logic.pl_true(inverse_statement, assignments)
     "*** END YOUR CODE HERE ***"
 
@@ -185,6 +200,9 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
+    #print("atLeastOne")
+    #print(literals)
+    #at least one is the same function as an or gate
     return logic.disjoin(*literals)
     "*** END YOUR CODE HERE ***"
 
@@ -199,6 +217,7 @@ def atMostOne(literals: List[Expr]) -> Expr:
     "*** BEGIN YOUR CODE HERE ***"
     #print(literals)
     #(~c | ~d) & (~b | ~d) & (~b | ~c) & (~a | ~d) & (~a | ~c) & (~a | ~b);
+    #I used a karnaugh map and solved it to find the solution
     result=[]
     #print(result)
     for i in range(len(literals)):
@@ -219,6 +238,7 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     "*** BEGIN YOUR CODE HERE ***"
     #print(literals)
     #(a | b | c | d) & (~c | ~d) & (~b | ~d) & (~b | ~c) & (~a | ~d) & (~a | ~c) & (~a | ~b);
+    #very similar to atMostOne, I used another karnaugh map to solve it
     result=[]
     result.append(logic.disjoin(literals))
     #print(result)
@@ -260,7 +280,7 @@ def pacmanSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[
         return None
     
     "*** BEGIN YOUR CODE HERE ***"
-
+    #
     return exactlyOne(possible_causes)
     "*** END YOUR CODE HERE ***"
 
@@ -835,3 +855,35 @@ class PlanningProblem:
         a unique goal state such as PositionPlanningProblem
         """
         util.raiseNotDefined()
+
+
+
+
+def sentence4():
+    "*** MODIFICATION 1 ***"
+    AgenteFlecha_0 = logic.PropSymbolExpr("AgenteFlecha_0")
+    AgenteFlecha_1 = logic.PropSymbolExpr("AgenteFlecha_1")
+    AgenteDispara_0 = logic.PropSymbolExpr("AgenteDispara_0")
+    WumpusMuerto_1 = logic.PropSymbolExpr("WumpusMuerto_1")
+
+    expr1 = AgenteFlecha_1 % (AgenteFlecha_0 & ~AgenteDispara_0)
+    expr2 = (AgenteDispara_0 & ~AgenteFlecha_1) >> WumpusMuerto_1
+    expr3= logic.conjoin(~WumpusMuerto_1, ~AgenteDispara_0, AgenteFlecha_0) >> AgenteFlecha_1
+    expr4= logic.conjoin(~AgenteDispara_0, ~WumpusMuerto_1, AgenteFlecha_1)
+
+    return logic.conjoin(expr1, expr2, expr3, expr4)
+
+
+def sentence4():
+    "*** MODIFICATION 2 ***"
+    Agent11_0 = logic.PropSymbolExpr("Agent[1,1]_0")
+    Agent21_1 = logic.PropSymbolExpr("Agent[2,1]_1")
+    North_0 = logic.PropSymbolExpr("North_0")
+    East_0 = logic.PropSymbolExpr("East_0")
+
+    expr1 = Agent21_1 % logic.conjoin(Agent11_0, East_0, ~North_0)
+    expr2 = Agent21_1
+    expr3 = East_0 | North_0
+    
+    return logic.conjoin(expr1, expr2, expr3)
+

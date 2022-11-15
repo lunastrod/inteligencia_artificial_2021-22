@@ -823,32 +823,3 @@ class PlanningProblem:
         a unique goal state such as PositionPlanningProblem
         """
         util.raiseNotDefined()
-
-
-def sentence4():
-    "*** MODIFICATION 1 ***"
-    AgenteFlecha_0 = logic.PropSymbolExpr("AgenteFlecha_0")
-    AgenteFlecha_1 = logic.PropSymbolExpr("AgenteFlecha_1")
-    AgenteDispara_0 = logic.PropSymbolExpr("AgenteDispara_0")
-    WumpusMuerto_1 = logic.PropSymbolExpr("WumpusMuerto_1")
-
-    expr1 = AgenteFlecha_1 % (AgenteFlecha_0 & ~AgenteDispara_0)
-    expr2 = (AgenteDispara_0 & ~AgenteFlecha_1) >> WumpusMuerto_1
-    expr3= logic.conjoin(~WumpusMuerto_1, ~AgenteDispara_0, AgenteFlecha_0) >> AgenteFlecha_1
-    expr4= logic.conjoin(~AgenteDispara_0, ~WumpusMuerto_1, AgenteFlecha_1)
-
-    return logic.conjoin(expr1, expr2, expr3, expr4)
-
-
-def sentence4():
-    "*** MODIFICATION 2 ***"
-    Agent11_0 = logic.PropSymbolExpr("Agent[1,1]_0")
-    Agent21_1 = logic.PropSymbolExpr("Agent[2,1]_1")
-    North_0 = logic.PropSymbolExpr("North_0")
-    East_0 = logic.PropSymbolExpr("East_0")
-
-    expr1 = Agent21_1 % logic.conjoin(Agent11_0, East_0, ~North_0)
-    expr2 = Agent21_1
-    expr3 = East_0 | North_0
-    
-    return logic.conjoin(expr1, expr2, expr3)
