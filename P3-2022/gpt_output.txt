@@ -1,0 +1,78 @@
+Question 1:
+
+To construct a Bayes net for the given game state, we need to first identify all the variables in the problem and their relationships.
+
+The variables in this Bayes net are:
+
+x position: This variable represents the x-coordinate of the position of the houses.
+y position: This variable represents the y-coordinate of the position of the houses.
+food house: This variable contains the coordinates of the center of the food house.
+ghost house: This variable contains the coordinates of the center of the ghost house.
+observation variables: There is a large number of observation variables, one for each cell that Pacman can measure. The observation variables represent the measurements made by Pacman at each cell.
+To construct the Bayes net, we need to specify the relationships between these variables. The x and y position variables are dependent on the food and ghost house variables, as the positions of the houses determine the x and y coordinates of their centers. The observation variables are dependent on the x, y, food house, and ghost house variables, as the measurements made by Pacman at each cell are influenced by the positions of the houses.
+
+Given this information, we can populate the obsVars list with the observation variables for each cell that Pacman can measure. We can do this by iterating over the possible houses in the game state and the walls of each house, and using the OBS_VAR_TEMPLATE constant to generate the names of the observation variables.
+
+Next, we can populate the edges list with the relationships between the variables. We can do this by adding a tuple (from, to) for each relationship in the Bayes net. For example, we can add the tuple (FOOD_HOUSE_VAR, X_POS_VAR) to represent the relationship between the food house variable and the x position variable.
+
+Finally, we can set the domain of each variable in the variableDomainsDict dictionary. The domain of a variable is the set of possible assignments for that variable. For example, the domain of the x position variable is the set of possible x-coordinates of the house centers. We can set the domain of each variable using the constants defined at the top of the file.
+
+The resulting code for the constructBayesNet function might look something like this:
+
+
+
+
+
+
+Question 2:
+
+To fill the conditional probability table (CPT) for the y position variable, we need to specify the probability of each possible assignment for the y position variable. In this case, the possible assignments for the y position variable are the possible y-coordinates of the house centers.
+
+We can use the PROB_* constants imported from the layout module to specify the probabilities for each assignment. For example, if the y-coordinate of the house center is at the top of the grid, we can use the PROB_TOP constant to specify the probability of this assignment.
+
+We can use the Factor class from the inference module to create a factor representing the y position variable. We can then use the setProbability method of the factor to set the probability of each possible assignment.
+
+The resulting code for filling the CPT for the y position variable might look something like this:
+
+
+
+
+
+
+
+
+
+Question 3:
+To implement the joinFactors function, we need to calculate the set of unconditioned and conditioned variables for the join of the input factors, and then create a new factor that has those variables and whose probability entries are the product of the corresponding rows of the input factors.
+
+First, we can check that the input factors do not have any unconditioned variables in common, since these variables can only appear in one input factor. We can do this by iterating over the list of input factors and collecting the sets of unconditioned variables for each factor. Then, we can use the functools.reduce function to intersect these sets of unconditioned variables, and if the resulting set is non-empty, we can raise an error.
+
+Next, we can calculate the set of unconditioned and conditioned variables for the join of the input factors. We can do this by iterating over the input factors and collecting the sets of unconditioned and conditioned variables for each factor. Then, we can use the set.union method to compute the union of these sets, which will give us the set of unconditioned and conditioned variables for the join of the input factors.
+
+Once we have the sets of unconditioned and conditioned variables for the join, we can create a new factor that has those variables and whose probability entries are the product of the corresponding rows of the input factors. To do this, we can use the Factor class from the inference module to create a new factor with the appropriate variables and domains. We can then iterate over the list of possible assignment dictionaries for the new factor, and use the getProbability method of the input factors to compute the product of the probabilities for each assignment dictionary. We can then use the setProbability method of the new factor to set the probabilities for each assignment dictionary.
+
+After implementing these steps, the joinFactors function should be able to calculate the set of unconditioned and conditioned variables for the join of the input factors, and create a new factor that has those variables and whose probability entries are the product of the corresponding rows of the input factors. The resulting code for the joinFactors function might look something like this:
+
+Copy code
+def joinFactors(factors):
+    """
+    Calculate the set of unconditioned and conditioned variables for the join
+    of the input factors, and create a new factor that has those variables
+    and whose probability entries are the product of the corresponding rows
+    of the input factors.
+    """
+
+    # Check that the input factors do not have any unconditioned variables in common
+    setsOfUnconditioned = [set(factor.unconditionedVariables()) for factor in factors]
+    if len(factors) > 1:
+        intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
+        if len(intersect) > 0:
+            raise ValueError("unconditionedVariables can only appear in one factor. \n"
+                    + "unconditionedVariables: " + str(intersect) + 
+                    "\nappear in more than one input factor.\n" + 
+                    "Input factors: \n" +
+                    "\n".join(map(str, factors)))
+
+    # Calculate the set of unconditioned and conditioned variables for the join
+    unconditionedVariables = set.union(*setsOfUnconditioned)
+    conditionedVariables = set.union(*[set(factor.conditionedVariables())

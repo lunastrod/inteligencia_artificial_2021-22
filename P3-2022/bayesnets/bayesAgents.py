@@ -97,7 +97,31 @@ def constructBayesNet(gameState):
     variableDomainsDict = {}
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+     # Generate the observation variables
+    for housePos in gameState.getPossibleHouses(): # for each house
+        for obsPos in gameState.getHouseWalls(housePos):# for each wall in the house
+            obsVar = OBS_VAR_TEMPLATE % obsPos # create the observation variable
+            obsVars.append(obsVar) # add it to the list of observation variables
+
+    # Add the relationships between the variables
+    edges.append((X_POS_VAR, FOOD_HOUSE_VAR)) # food house depends on x position
+    edges.append((Y_POS_VAR, FOOD_HOUSE_VAR)) # food house depends on y position
+    edges.append((X_POS_VAR, GHOST_HOUSE_VAR)) # ghost house depends on x position
+    edges.append((Y_POS_VAR, GHOST_HOUSE_VAR)) # ghost house depends on y position
+
+    # Add the relationships between the observation variables and the houses
+    for obsVar in obsVars:
+        edges.append((FOOD_HOUSE_VAR, obsVar))
+        edges.append((GHOST_HOUSE_VAR, obsVar))
+    
+    # Add the domains for each variable
+    variableDomainsDict[X_POS_VAR] = X_POS_VALS
+    variableDomainsDict[Y_POS_VAR] = Y_POS_VALS
+    variableDomainsDict[FOOD_HOUSE_VAR] = HOUSE_VALS
+    variableDomainsDict[GHOST_HOUSE_VAR] = HOUSE_VALS
+    for obsVar in obsVars:
+        variableDomainsDict[obsVar] = OBS_VALS
+    
     "*** END YOUR CODE HERE ***"
 
     variables = [X_POS_VAR, Y_POS_VAR] + HOUSE_VARS + obsVars
@@ -129,7 +153,11 @@ def fillYCPT(bayesNet, gameState):
 
     yFactor = bn.Factor([Y_POS_VAR], [], bayesNet.variableDomainsDict())
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    yFactor.setProbability({Y_POS_VAR: BOTH_BOTTOM_VAL}, PROB_BOTH_BOTTOM)
+    yFactor.setProbability({Y_POS_VAR: BOTH_TOP_VAL}, PROB_BOTH_TOP)
+    
+    yFactor.setProbability({Y_POS_VAR: LEFT_TOP_VAL}, PROB_ONLY_LEFT_TOP)
+    yFactor.setProbability({Y_POS_VAR: LEFT_BOTTOM_VAL}, PROB_ONLY_LEFT_BOTTOM)
     "*** END YOUR CODE HERE ***"
     bayesNet.setCPT(Y_POS_VAR, yFactor)
 

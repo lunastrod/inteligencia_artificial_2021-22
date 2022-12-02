@@ -130,7 +130,37 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # initialize return variables and the variables to eliminate
+        evidenceVariablesSet = set(evidenceDict.keys())
+        queryVariablesSet = set(queryVariables)
+        eliminationVariables = (bayesNet.variablesSet() - evidenceVariablesSet) - queryVariablesSet
+
+        # grab all factors where we know the evidence variables (to reduce the size of the tables)
+        currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+
+        # join all factors by variable
+        for joinVariable in bayesNet.variablesSet():
+            currentFactorsList, joinedFactor = joinFactorsByVariable(currentFactorsList, joinVariable)
+            currentFactorsList.append(joinedFactor)
+
+        # currentFactorsList should contain the connected components of the graph now as factors, must join the connected components
+        fullJoint = joinFactors(currentFactorsList)
+
+        # marginalize all variables that aren't query or evidence
+        incrementallyMarginalizedJoint = fullJoint
+        for eliminationVariable in eliminationVariables:
+            incrementallyMarginalizedJoint = eliminate(incrementallyMarginalizedJoint, eliminationVariable)
+
+        fullJointOverQueryAndEvidence = incrementallyMarginalizedJoint
+
+        # normalize so that the probability sums to one
+        # the input factor contains only the query variables and the evidence variables,
+        # both as unconditioned variables
+        queryConditionedOnEvidence = normalize(fullJointOverQueryAndEvidence)
+        # now the factor is conditioned on the evidence variables
+
+        # the order is join on all variables, then eliminate on all elimination variables
+        return queryConditionedOnEvidence
         "*** END YOUR CODE HERE ***"
 
 
