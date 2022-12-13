@@ -289,7 +289,15 @@ def getMostLikelyFoodHousePosition(evidence, bayesNet, eliminationOrder):
     (This should be a very short method.)
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    factor = inference.inferenceByVariableElimination(bayesNet, ['foodHouse', 'ghostHouse'], evidence, eliminationOrder)
+    highestProb = -100000000000000000000000
+    highestAssignDict = dict()
+    for assignmentDict in factor.getAllPossibleAssignmentDicts():
+        probability = factor.getProbability(assignmentDict)
+        if probability > highestProb:
+            highestProb = probability
+            highestAssignDict = assignmentDict
+    return highestAssignDict
     "*** END YOUR CODE HERE ***"
 
 
@@ -392,7 +400,26 @@ class VPIAgent(BayesAgent):
         rightExpectedValue = 0
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        CPT = inference.inferenceByVariableElimination(self.bayesNet, [FOOD_HOUSE_VAR, GHOST_HOUSE_VAR], evidence, eliminationOrder)
+
+        ftopleft = {}
+        ftopleft.update(evidence)
+        ftopleft[FOOD_HOUSE_VAR] = TOP_LEFT_VAL
+        ftopleft[GHOST_HOUSE_VAR] = TOP_RIGHT_VAL
+
+        ftopright = {}
+        ftopright.update(evidence)
+        ftopright[FOOD_HOUSE_VAR] = TOP_RIGHT_VAL
+        ftopright[GHOST_HOUSE_VAR] = TOP_LEFT_VAL
+
+
+        leftExpectedValue = \
+            CPT.getProbability(ftopleft) * WON_GAME_REWARD \
+            + CPT.getProbability(ftopright) * GHOST_COLLISION_REWARD 
+        rightExpectedValue = \
+            CPT.getProbability(ftopleft) * GHOST_COLLISION_REWARD \
+            + CPT.getProbability(ftopright) * WON_GAME_REWARD
+
         "*** END YOUR CODE HERE ***"
 
         return leftExpectedValue, rightExpectedValue
@@ -459,7 +486,11 @@ class VPIAgent(BayesAgent):
         expectedValue = 0
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        probsandoutcomes = self.getExplorationProbsAndOutcomes(evidence)
+
+        for (prob, evidence0) in probsandoutcomes:
+            expectedValue = expectedValue + prob * max(self.computeEnterValues(evidence0, enterEliminationOrder))
+        return expectedValue
         "*** END YOUR CODE HERE ***"
 
         return expectedValue
